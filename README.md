@@ -65,3 +65,7 @@ FullName                                                         Length  Creatio
 
 [+] Output saved to: C:\Users\tester\Desktop\Invoke-SMBHunter\Files_Results.txt and C:\Users\tester\Desktop\Invoke-SMBHunter\Files_Results.csv
 ```
+
+## Credits
+
+- Invoke-ShareHunter by Leo4j (https://github.com/Leo4j/Invoke-ShareHunter)
