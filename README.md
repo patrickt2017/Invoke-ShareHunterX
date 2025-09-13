@@ -1,2 +1,2 @@
-# Invoke-SMBHunter
+# Invoke-ShareHunterX
 
