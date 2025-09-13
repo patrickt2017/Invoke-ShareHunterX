@@ -44,7 +44,7 @@ credit*      # file names starting with 'credit'
 Add the `-Verbose` parameter to instantly display the list of files found in the PowerShell prompt.
 
 ```powershell
-PS C:\Users\tester\Desktop\Invoke-SMBHunter> Invoke-SMBHunter -PatternsFile .\patterns.txt -Verbose
+PS C:\Users\tester\Desktop\Invoke-ShareHunterX> Invoke-ShareHunterX -PatternsFile .\patterns.txt -Verbose
 
 [+] Enumerating Computer Objects...
 [+] Running Port Scan...
@@ -52,7 +52,7 @@ PS C:\Users\tester\Desktop\Invoke-SMBHunter> Invoke-SMBHunter -PatternsFile .\pa
 [+] Testing Read Access...
 ...
 
-[+] Output saved to: C:\Users\tester\Desktop\Invoke-SMBHunter\Shares_Results.txt and C:\Users\tester\Desktop\Invoke-SMBHunter\Shares_Results.csv
+[+] Output saved to: C:\Users\tester\Desktop\Invoke-ShareHunterX\Shares_Results.txt and C:\Users\tester\Desktop\Invoke-ShareHunterX\Shares_Results.csv
 
 ...
 [+] Searching for files matching patterns in readable shares
@@ -64,7 +64,7 @@ FullName                                                         Length  Creatio
 \\server21.abc.com\Shared\User\installer.msi                       53373 5/13/2025 8:07:08 PM 8/2/2025 8:07:08 PM  ab...
 \\pc2.abc.com\Shared\dasda.txt                                     12    6/13/2025 2:55:19 PM 7/2/2025 2:55:19 PM  ab...
 
-[+] Output saved to: C:\Users\tester\Desktop\Invoke-SMBHunter\Files_Results.txt and C:\Users\tester\Desktop\Invoke-SMBHunter\Files_Results.csv
+[+] Output saved to: C:\Users\tester\Desktop\Invoke-ShareHunterX\Files_Results.txt and C:\Users\tester\Desktop\Invoke-ShareHunterX\Files_Results.csv
 ```
 
 ## Credits
