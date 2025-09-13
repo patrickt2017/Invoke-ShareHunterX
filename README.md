@@ -70,3 +70,4 @@ FullName                                                         Length  Creatio
 ## Credits
 
 - Invoke-ShareHunter by Leo4j (https://github.com/Leo4j/Invoke-ShareHunter)
+- File name pattern sample from PowerHuntShares by NetSPI (https://github.com/NetSPI/PowerHuntShares/)
