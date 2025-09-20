@@ -35,11 +35,11 @@ function Invoke-ShareHunterX {
     Provide a file containing a list of filename patterns (one per line) to search for in readable shares
 
 	.EXAMPLE
-	Invoke-ShareHunter
-	Invoke-ShareHunter -Domain ferrari.local
-	Invoke-ShareHunter -Targets "Workstation-01.ferrari.local,DC01.ferrari.local"
- 	Invoke-ShareHunter -TargetsFile C:\Users\Public\Documents\Shares.txt
-    Invoke-ShareHunter -PatternsFile C:\Users\Public\Documents\Patterns.txt -Verbose
+	Invoke-ShareHunterX
+	Invoke-ShareHunterX -Domain ferrari.local
+	Invoke-ShareHunterX -Targets "Workstation-01.ferrari.local,DC01.ferrari.local"
+ 	Invoke-ShareHunterX -TargetsFile C:\Users\Public\Documents\Shares.txt
+    Invoke-ShareHunterX -PatternsFile C:\Users\Public\Documents\Patterns.txt -Verbose
 	
 	#>
 	
@@ -720,10 +720,11 @@ public class Kernel32 {
 	# If PatternsFile is provided, search for files matching the patterns in readable shares
     if($filteredReadableShares -and $PatternsFile) {
         if (Test-Path $PatternsFile) {
-            $patterns = Get-Content -Path $PatternsFile | Where-Object { $_.Trim() -ne "" }
+			# Transform to an array of strings
+            $patterns = Get-Content -Path $PatternsFile
             if ($patterns) {
-                Write-Output "[+] Searching for files matching patterns in readable shares"
-                Write-Output "[*] Patterns used: $($patterns -join ', ')"
+				Write-Output "[+] Searching for files matching patterns in readable shares"
+				Write-Output "[*] Patterns used: $patterns"
                 
                 # Initialize array to store all file results
                 $allFileResults = @()
@@ -736,17 +737,30 @@ public class Kernel32 {
                         "Unknown"  # Fallback if no domain info is available
                     }
                     
-                    foreach ($pattern in $patterns) {
-                        try {
-                            $files = Get-ChildItem -Path $share -Recurse -Filter $pattern -ErrorAction SilentlyContinue
-                            if ($files) {
-                                $fileDetails = $files | Select-Object FullName, Length, CreationTime, LastWriteTime, @{Name='Domain';Expression={$shareDomain}}
-                                $allFileResults += $fileDetails
-                            }
-                        } catch {
-                            Write-Output "[-] Error accessing share '$share': $_"
-                        }
-                    }
+					# Define search parameters using splatting
+					$SearchArgs = @{
+						Path        = $share
+						Recurse     = $true
+						Include     = $patterns  # Single string like "*credit*","*pci*","*social*"
+						ErrorAction = 'SilentlyContinue'
+					}
+
+					# Search files using splatted parameters
+					$files = Get-ChildItem @SearchArgs
+					if ($files) {
+						$fileDetails = $files | Select-Object FullName, Length, CreationTime, LastWriteTime, 
+							@{Name='Domain';Expression={$shareDomain}}
+							
+						$allFileResults += $fileDetails
+						
+						if ($Username -AND $Password -AND $UserDomain) {
+							$allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_$($Username)_Results.txt" -Force
+							$allFileResults | Export-Csv "$pwd\Files_$($Username)_Results.csv" -NoTypeInformation -Force
+						} else {
+							$allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_Results.txt" -Force
+							$allFileResults | Export-Csv "$pwd\Files_Results.csv" -NoTypeInformation -Force
+						}
+					}
                 }
                 
                 if ($allFileResults) {
@@ -758,13 +772,13 @@ public class Kernel32 {
 
                     # Save results to TXT and CSV
                     if ($Username -AND $Password -AND $UserDomain) {
-                        $allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_$($Username)_Results.txt" -Force
-                        $allFileResults | Export-Csv "$pwd\Files_$($Username)_Results.csv" -NoTypeInformation -Force
+                        #$allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_$($Username)_Results.txt" -Force
+                        #$allFileResults | Export-Csv "$pwd\Files_$($Username)_Results.csv" -NoTypeInformation -Force
                         Write-Output ""
                         Write-Output "[+] Output saved to: $pwd\Files_$($Username)_Results.txt and $pwd\Files_$($Username)_Results.csv"
                     } else {
-                        $allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_Results.txt" -Force
-                        $allFileResults | Export-Csv "$pwd\Files_Results.csv" -NoTypeInformation -Force
+                        #$allFileResults | Format-Table -AutoSize | Out-String | Out-File "$pwd\Files_Results.txt" -Force
+                        #$allFileResults | Export-Csv "$pwd\Files_Results.csv" -NoTypeInformation -Force
                         Write-Output ""
                         Write-Output "[+] Output saved to: $pwd\Files_Results.txt and $pwd\Files_Results.csv"
                     }
